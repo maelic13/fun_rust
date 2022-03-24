@@ -54,20 +54,16 @@ fn play_game_multithreaded(cycles: u64, change_choice: bool, cpu_count: usize) -
     sub_cycles.push(cycles as u64 / cpu_count as u64 + cycles as u64 % cpu_count as u64);
 
     for cycle in sub_cycles {
-        play_game_wrapped(cycle, change_choice, tx.clone());
+        let txc = tx.clone();
+        thread::spawn(move || {
+            txc.send(play_game(cycle, change_choice)).unwrap();
+        });
     }
     for result in rx.iter().take(cpu_count) {
         complete_result.total += result.total;
         complete_result.successful += result.successful;
     }
     return complete_result;
-}
-
-
-fn play_game_wrapped(cycles: u64, change_choice: bool, tx: mpsc::Sender<Result>) {
-    thread::spawn(move || {
-        tx.send(play_game(cycles, change_choice)).unwrap();
-    });
 }
 
 
