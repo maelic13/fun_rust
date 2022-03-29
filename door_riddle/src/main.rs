@@ -10,20 +10,6 @@ struct Result {
 }
 
 
-fn main() {
-    let cpu_count = num_cpus::get();
-    const CYCLES: u64 = 1000000000;
-
-    let mut watch = Stopwatch::start_new();
-    let result1 = play_game_multithreaded(CYCLES, false, cpu_count);
-    print_results_to_console(result1, watch, CYCLES, false);
-
-    watch.restart();
-    let result2 = play_game_multithreaded(CYCLES, true, cpu_count);
-    print_results_to_console(result2, watch, CYCLES, true);
-}
-
-
 fn play_game(cycles: u64, change_choice: bool) -> Result {
     let doors = [false, true, false];
     let rng = fastrand::Rng::new();
@@ -69,8 +55,22 @@ fn play_game_multithreaded(cycles: u64, change_choice: bool, cpu_count: usize) -
 
 fn print_results_to_console(result: Result, watch: Stopwatch, cycles: u64, change_choice: bool) {
     println!();
-    println!("Change = {}. Time elapsed {:#?}", change_choice, watch.elapsed());
-    println!("{} successful tries, {} total. Success rate {} %.", result.successful, result.total,
+    println!("Change = {}. Time elapsed {:#?} ms.", change_choice, watch.elapsed().as_millis());
+    println!("{} successful tries, {} total. Success rate {:.3} %.", result.successful, result.total,
              result.successful as f64 / result.total as f64 * 100 as f64);
     println!("Speed = {} Miter/s.", cycles / watch.elapsed_ms() as u64 / 1000 as u64);
+}
+
+
+fn main() {
+    let cpu_count = num_cpus::get();
+    const CYCLES: u64 = 1000000000;
+
+    let mut watch = Stopwatch::start_new();
+    let result1 = play_game_multithreaded(CYCLES, false, cpu_count);
+    print_results_to_console(result1, watch, CYCLES, false);
+
+    watch.restart();
+    let result2 = play_game_multithreaded(CYCLES, true, cpu_count);
+    print_results_to_console(result2, watch, CYCLES, true);
 }
