@@ -6,20 +6,19 @@ use std::thread;
 
 use stopwatch::Stopwatch;
 
-
 fn play_game(cycles: u64, change_choice: bool) -> Result {
     let doors = [false, true, false];
     let rng = fastrand::Rng::new();
     let mut result = Result::default();
 
-    for _i in 0..cycles {
-        if change_choice != doors[rng.usize(0..3)] {
+    (0..cycles).for_each(|_i| {
+        if change_choice != doors[rng.u8(0..3) as usize] {
             result.successful += 1;
         }
         else {
             result.failed += 1;
         }
-    }
+    });
     return result;
 }
 
@@ -31,28 +30,38 @@ fn play_game_multithreaded(cycles: u64, change_choice: bool, cpu_count: usize) -
     let (tx, rx) = mpsc::channel();
     let mut sub_cycles = Vec::new();
 
-    for _ in 0..cpu_count - 1 {
+    (0..cpu_count - 1).for_each(|_| {
         sub_cycles.push(cycles as u64 / cpu_count as u64);
-    }
+    });
     sub_cycles.push(cycles as u64 / cpu_count as u64 + cycles as u64 % cpu_count as u64);
 
-    for cycle in sub_cycles {
+    sub_cycles.into_iter().for_each(|cycle| {
         let txc = tx.clone();
         thread::spawn(move || {
             txc.send(play_game(cycle, change_choice)).unwrap();
         });
-    }
+    });
     let results = rx.iter().take(cpu_count);
     return Result::combine(results);
 }
 
 fn print_results_to_console(result: Result, watch: Stopwatch, cycles: u64, change_choice: bool) {
     println!();
-    println!("Change = {}. Time elapsed {:#?} ms.", change_choice, watch.elapsed().as_millis());
-    println!("{} successful tries, {} total. Success rate {:.3} %.",
-             result.successful, result.successful + result.failed,
-             result.successful as f64 / (result.successful + result.failed) as f64 * 100 as f64);
-    println!("Speed = {} Miter/s.", cycles / watch.elapsed_ms() as u64 / 1000 as u64);
+    println!(
+        "Change = {}. Time elapsed {:#?} ms.",
+        change_choice,
+        watch.elapsed().as_millis()
+    );
+    println!(
+        "{} successful tries, {} total. Success rate {:.3} %.",
+        result.successful,
+        result.successful + result.failed,
+        result.successful as f64 / (result.successful + result.failed) as f64 * 100 as f64
+    );
+    println!(
+        "Speed = {} Miter/s.",
+        cycles / watch.elapsed_ms() as u64 / 1000 as u64
+    );
 }
 
 fn main() {

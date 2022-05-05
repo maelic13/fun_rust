@@ -4,7 +4,7 @@ use std::sync::mpsc::Iter;
 #[derive(Default)]
 pub struct Result {
     pub failed: u64,
-    pub successful: u64
+    pub successful: u64,
 }
 
 impl Result {
