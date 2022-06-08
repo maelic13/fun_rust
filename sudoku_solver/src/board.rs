@@ -28,8 +28,8 @@ pub struct Board {
 }
 
 impl Board {
-    pub(crate) fn new() -> Board {
-        return Board { board: vec![0; 81], move_history: vec![],solved: false };
+    pub fn new() -> Board {
+        return Board { board: vec![0; 81], move_history: vec![], solved: false };
     }
 
     pub fn from_vector(vector: Vec<usize>) -> Board {
@@ -64,21 +64,21 @@ impl Board {
         return true;
     }
 
-    pub fn sorted_valid_moves(&mut self) -> Vec<Move> {
-        let mut valid_moves = self.valid_moves();
-        let sorted_valid_moves = vec![];
-
-        let mut moves_counter: Vec<usize> = vec![0; 81];
-        for valid_move in valid_moves {
-            moves_counter[valid_move.index()] += 1;
-        }
-        let mut sorted_moves_counter = moves_counter.to_vec();
-        sorted_moves_counter.sort();
-
-        valid_moves.sort_by(|a, b| moves_counter[b.index()].cmp(&moves_counter[a.index()]));
-
-        return sorted_valid_moves;
-    }
+    // pub fn sorted_valid_moves(&mut self) -> Vec<Move> {
+    //     let mut valid_moves = self.valid_moves();
+    //     let sorted_valid_moves = vec![];
+    //
+    //     let mut moves_counter: Vec<usize> = vec![0; 81];
+    //     for valid_move in valid_moves {
+    //         moves_counter[valid_move.index()] += 1;
+    //     }
+    //     let mut sorted_moves_counter = moves_counter.to_vec();
+    //     sorted_moves_counter.sort();
+    //
+    //     valid_moves.sort_by(|a, b| moves_counter[b.index()].cmp(&moves_counter[a.index()]));
+    //
+    //     return sorted_valid_moves;
+    // }
 
     pub fn valid_moves(&mut self) -> Vec<Move> {
         let possible_moves = self.all_possible_moves();
