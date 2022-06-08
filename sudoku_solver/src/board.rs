@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 #[derive(Clone, Copy)]
 pub struct Move {
     pub column: usize,
@@ -43,7 +45,7 @@ impl Board {
     }
 
     pub fn make_move(&mut self, sudoku_move: Move) -> bool {
-        if self.board[sudoku_move.index()] == 0 {
+        if self.board[sudoku_move.index()] != 0 {
             return false;
         }
 
@@ -62,6 +64,22 @@ impl Board {
         return true;
     }
 
+    pub fn sorted_valid_moves(&mut self) -> Vec<Move> {
+        let mut valid_moves = self.valid_moves();
+        let sorted_valid_moves = vec![];
+
+        let mut moves_counter: Vec<usize> = vec![0; 81];
+        for valid_move in valid_moves {
+            moves_counter[valid_move.index()] += 1;
+        }
+        let mut sorted_moves_counter = moves_counter.to_vec();
+        sorted_moves_counter.sort();
+
+        valid_moves.sort_by(|a, b| moves_counter[b.index()].cmp(&moves_counter[a.index()]));
+
+        return sorted_valid_moves;
+    }
+
     pub fn valid_moves(&mut self) -> Vec<Move> {
         let possible_moves = self.all_possible_moves();
         let mut valid_moves = vec![];
@@ -70,8 +88,8 @@ impl Board {
             self.make_move(tested_move);
             if self.valid() {
                 valid_moves.push(tested_move);
-                self.unmake_last_move();
             }
+            self.unmake_last_move();
         }
         return valid_moves;
     }
@@ -117,7 +135,8 @@ impl Board {
         let mut part_dedup = part.to_vec();
         part_dedup.sort();
         part_dedup.dedup();
-        return part.len() == part_dedup.len();
+        return part.iter().filter(|&n| *n != 0).count()
+            == part_dedup.iter().filter(|&n| *n != 0).count();
     }
 
     fn all_columns_valid(&self) -> bool {

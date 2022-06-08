@@ -1,4 +1,4 @@
-use board::Board;
+use board::{Board, Move};
 
 mod board;
 
@@ -18,18 +18,13 @@ fn main() {
     board.print();
     println!();
 
-    for valid_move in board.valid_moves() {
-        valid_move.print();
-    }
-
-    // let result = solve_board(board);
-    // result.print();
-    // println!("Validity: {}.", result.valid())
+    let result = solve_board(board);
+    result.print();
+    println!("Validity: {}.", result.valid())
 }
 
 fn solve_board(mut board: Board) -> Board {
-    let valid_moves = board.valid_moves();
-    for valid_move in valid_moves {
+    for valid_move in board.sorted_valid_moves() {
         board.make_move(valid_move);
         board = solve_board(board);
         if board.solved() {
