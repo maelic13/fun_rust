@@ -1,12 +1,10 @@
-use board::{Board, Move};
-use new_board::NewBoard;
+use board::Board;
 
 mod board;
-mod new_board;
 
 
 fn main() {
-    let mut board = NewBoard::from_vector(vec![
+    let mut board = Board::from_vector(vec![
          6, 0, 0, 0, 7, 1, 4, 0, 0,
          1, 8, 5, 0, 0, 9, 2, 0, 0,
          0, 4, 0, 2, 5, 0, 9, 0, 8,
@@ -20,16 +18,9 @@ fn main() {
     board.print();
     println!();
 
-    for pos_moves in board.possible_moves {
-        for num in pos_moves {
-            print!("{}", num);
-        }
-        println!();
-    }
-
-    // let result = solve_board(board);
-    // result.print();
-    // println!("Validity: {}.", result.valid())
+    let result = solve_board(board);
+    result.print();
+    println!("Validity: {}.", result.valid())
 }
 
 fn solve_board(mut board: Board) -> Board {
