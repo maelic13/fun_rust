@@ -1,0 +1,22 @@
+[package]
+name = "fun_rust"
+version = "1.1.0"
+authors = ["Miloslav Macůrek <macurek.m@gmail.com>"]
+edition = "2021"
+
+[[bin]]
+name = "door_riddle"
+path = "door_riddle/door_riddle.rs"
+
+[[bin]]
+name = "pi_digits"
+path = "pi_digits/pi_digits.rs"
+
+[[bin]]
+name = "sudoku_solver"
+path = "sudoku_solver/sudoku_solver.rs"
+
+[dependencies]
+fastrand = "1.8.0"
+num_cpus = "1.15.0"
+stopwatch = "0.0.7"

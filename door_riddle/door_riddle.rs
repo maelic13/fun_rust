@@ -14,8 +14,7 @@ fn play_game(cycles: u64, change_choice: bool) -> Result {
     (0..cycles).for_each(|_i| {
         if change_choice != doors[rng.u8(0..3) as usize] {
             result.successful += 1;
-        }
-        else {
+        } else {
             result.failed += 1;
         }
     });

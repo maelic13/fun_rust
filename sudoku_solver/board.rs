@@ -20,15 +20,21 @@ impl Board {
             }
         }
 
-        return Board { current_board: vector.to_vec(), original_board: vector.to_vec(),
-            playable_moves: possible_moves, move_history: vec![] };
+        return Board {
+            current_board: vector.to_vec(),
+            original_board: vector.to_vec(),
+            playable_moves: possible_moves,
+            move_history: vec![],
+        };
     }
 
     pub fn valid(&self) -> bool {
         return true;
     }
 
-    pub fn solved(&self) -> bool { return  self.valid() && self.filled(); }
+    pub fn solved(&self) -> bool {
+        return self.valid() && self.filled();
+    }
 
     pub fn print(&self) {
         for i in 0..9 {
@@ -38,7 +44,8 @@ impl Board {
                     self.current_board[i * 9 + j].to_string()
                 } else {
                     " ".to_string()
-                }.to_string();
+                }
+                .to_string();
                 print!(" {} |", string);
             }
             print!("\n");
