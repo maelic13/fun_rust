@@ -14,6 +14,6 @@ impl Result {
             complete_result.failed += result.failed;
             complete_result.successful += result.successful;
         }
-        return complete_result;
+        complete_result
     }
 }

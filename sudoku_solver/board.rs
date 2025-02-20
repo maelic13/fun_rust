@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 pub struct Board {
     pub current_board: Vec<usize>,
     pub move_history: Vec<(usize, usize)>,
@@ -20,20 +21,20 @@ impl Board {
             }
         }
 
-        return Board {
+        Board {
             current_board: vector.to_vec(),
             original_board: vector.to_vec(),
             playable_moves: possible_moves,
             move_history: vec![],
-        };
+        }
     }
 
     pub fn valid(&self) -> bool {
-        return true;
+        true
     }
 
     pub fn solved(&self) -> bool {
-        return self.valid() && self.filled();
+        self.valid() && self.filled()
     }
 
     pub fn print(&self) {
@@ -61,7 +62,7 @@ impl Board {
         self.playable_moves[valid_move.0] = vec![];
         self.move_history.push(valid_move);
 
-        return true;
+        true
     }
 
     pub fn unmake_last_move(&mut self) -> bool {
@@ -73,7 +74,7 @@ impl Board {
         self.current_board[valid_move.0] = 0;
         self.playable_moves[valid_move.0] = (1..10).collect();
 
-        return true;
+        true
     }
 
     pub fn valid_moves(&mut self) -> Vec<(usize, usize)> {
@@ -87,7 +88,7 @@ impl Board {
             self.unmake_last_move();
         }
 
-        return valid_moves;
+        valid_moves
     }
 
     fn filled(&self) -> bool {
@@ -102,7 +103,7 @@ impl Board {
             }
         }
 
-        return count;
+        count
     }
 
     fn possible_moves(&self) -> Vec<(usize, usize)> {
@@ -114,6 +115,6 @@ impl Board {
             }
         }
 
-        return possible_moves;
+        possible_moves
     }
 }

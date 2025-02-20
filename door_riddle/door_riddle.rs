@@ -3,12 +3,11 @@ mod result;
 use result::Result;
 use std::sync::mpsc;
 use std::thread;
-
-use stopwatch::Stopwatch;
+use std::time::{Duration, Instant};
 
 fn play_game(cycles: u64, change_choice: bool) -> Result {
     let doors = [false, true, false];
-    let rng = fastrand::Rng::new();
+    let mut rng = fastrand::Rng::new();
     let mut result = Result::default();
 
     (0..cycles).for_each(|_i| {
@@ -18,7 +17,7 @@ fn play_game(cycles: u64, change_choice: bool) -> Result {
             result.failed += 1;
         }
     });
-    return result;
+    result
 }
 
 fn play_game_multithreaded(cycles: u64, change_choice: bool, cpu_count: usize) -> Result {
@@ -41,25 +40,29 @@ fn play_game_multithreaded(cycles: u64, change_choice: bool, cpu_count: usize) -
         });
     });
     let results = rx.iter().take(cpu_count);
-    return Result::combine(results);
+    Result::combine(results)
 }
 
-fn print_results_to_console(result: Result, watch: Stopwatch, cycles: u64, change_choice: bool) {
+fn print_results_to_console(
+    result: Result,
+    time_elapsed: Duration,
+    cycles: u64,
+    change_choice: bool,
+) {
     println!();
     println!(
-        "Change = {}. Time elapsed {:#?} ms.",
-        change_choice,
-        watch.elapsed().as_millis()
+        "Change = {}. Time elapsed {:#.1?}.",
+        change_choice, time_elapsed
     );
     println!(
         "{} successful tries, {} total. Success rate {:.3} %.",
         result.successful,
         result.successful + result.failed,
-        result.successful as f64 / (result.successful + result.failed) as f64 * 100 as f64
+        result.successful as f64 / (result.successful + result.failed) as f64 * 100f64
     );
     println!(
         "Speed = {} Miter/s.",
-        cycles / watch.elapsed_ms() as u64 / 1000 as u64
+        cycles / time_elapsed.as_millis() as u64 / 1000u64
     );
 }
 
@@ -67,11 +70,11 @@ fn main() {
     let cpu_count = num_cpus::get();
     const CYCLES: u64 = 1000000000;
 
-    let mut watch = Stopwatch::start_new();
+    let mut start = Instant::now();
     let mut result = play_game_multithreaded(CYCLES, false, cpu_count);
-    print_results_to_console(result, watch, CYCLES, false);
+    print_results_to_console(result, start.elapsed(), CYCLES, false);
 
-    watch.restart();
+    start = Instant::now();
     result = play_game_multithreaded(CYCLES, true, cpu_count);
-    print_results_to_console(result, watch, CYCLES, true);
+    print_results_to_console(result, start.elapsed(), CYCLES, true);
 }
