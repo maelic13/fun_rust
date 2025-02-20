@@ -17,6 +17,6 @@ name = "sudoku_solver"
 path = "sudoku_solver/sudoku_solver.rs"
 
 [dependencies]
-fastrand = "1.8.0"
-num_cpus = "1.15.0"
+fastrand = "2.3.0"
+num_cpus = "1.16.0"
 stopwatch = "0.0.7"
